@@ -20,7 +20,7 @@
 #include "analog.h"
 #include "avr_compat.h"
 #include "hardware_settings.h"
-#include "i2c_avr.h"
+//#include "i2c_avr.h"
 #include <stdlib.h> // atoi
 #include <string.h> 
 #include <avr/eeprom.h> 
@@ -182,46 +182,46 @@ static unsigned char check_buttons(void){
 	return(0);
 }
 
-void check_i2c_interface(void){
-	if (i2c_get_received_data(i2c_buf)){
-		if (i2c_buf[0]=='i'){
-			if (i2c_buf[1]=='=' && i2c_buf[2]!='\0'){
-				set_val[0]=atoi(&i2c_buf[2]);
-				if(set_val[0]>I_MAX){
-					set_val[0]=I_MAX;
-				}
-				if(set_val[0]<0){
-					set_val[0]=0;
-				}
-				i2c_send_data("ok");
-			}else{
-				int_to_ascii(measured_val[0],i2c_buf,2,0);
-				strcat(i2c_buf,"A");
-				i2c_send_data(i2c_buf);
-			}
-		}else if (i2c_buf[0]=='s'){
-			store_permanent();
-			i2c_send_data("ok");
-		}else if (i2c_buf[0]=='u'){
-			if (i2c_buf[1]=='=' && i2c_buf[2]!='\0'){
-				set_val[1]=atoi(&i2c_buf[2]);
-				if(set_val[1]>U_MAX){
-					set_val[1]=U_MAX;
-				}
-				if(set_val[1]<0){
-					set_val[1]=0;
-				}
-				i2c_send_data("ok");
-			}else{
-				int_to_ascii(measured_val[1],i2c_buf,1,0);
-				strcat(i2c_buf,"V");
-				i2c_send_data(i2c_buf);
-			}
-		}else{
-			i2c_send_data("err");
-		}
-	}
-}
+// void check_i2c_interface(void){
+// 	if (i2c_get_received_data(i2c_buf)){
+// 		if (i2c_buf[0]=='i'){
+// 			if (i2c_buf[1]=='=' && i2c_buf[2]!='\0'){
+// 				set_val[0]=atoi(&i2c_buf[2]);
+// 				if(set_val[0]>I_MAX){
+// 					set_val[0]=I_MAX;
+// 				}
+// 				if(set_val[0]<0){
+// 					set_val[0]=0;
+// 				}
+// 				i2c_send_data("ok");
+// 			}else{
+// 				int_to_ascii(measured_val[0],i2c_buf,2,0);
+// 				strcat(i2c_buf,"A");
+// 				i2c_send_data(i2c_buf);
+// 			}
+// 		}else if (i2c_buf[0]=='s'){
+// 			store_permanent();
+// 			i2c_send_data("ok");
+// 		}else if (i2c_buf[0]=='u'){
+// 			if (i2c_buf[1]=='=' && i2c_buf[2]!='\0'){
+// 				set_val[1]=atoi(&i2c_buf[2]);
+// 				if(set_val[1]>U_MAX){
+// 					set_val[1]=U_MAX;
+// 				}
+// 				if(set_val[1]<0){
+// 					set_val[1]=0;
+// 				}
+// 				i2c_send_data("ok");
+// 			}else{
+// 				int_to_ascii(measured_val[1],i2c_buf,1,0);
+// 				strcat(i2c_buf,"V");
+// 				i2c_send_data(i2c_buf);
+// 			}
+// 		}else{
+// 			i2c_send_data("err");
+// 		}
+// 	}
+// }
 
 int main(void)
 {
@@ -240,9 +240,9 @@ int main(void)
 		set_val[0]=eeprom_read_word((uint16_t *)0x02);
 	}
 	// I2C also called TWI, slave address=3
-	i2c_init(3,1,0);
+	// i2c_init(3,1,0);
 	sei();
-	i2c_send_data("on");
+	// i2c_send_data("on");
 	init_analog();
 	while (1) {
 		i++;
@@ -279,7 +279,7 @@ int main(void)
 		}else{
 			lcd_puts("  ");
 		}
-		check_i2c_interface();
+		// check_i2c_interface();
 
 		// current
 		lcd_gotoxy(0,1);
@@ -299,7 +299,7 @@ int main(void)
 		//dbg
 		//int_to_ascii(is_dacval(),out_buf,0,0);
 		//lcd_puts(out_buf);
-		check_i2c_interface();
+		// check_i2c_interface();
 
 		// the buttons must be responsive but they must not 
 		// scroll too fast if pressed permanently
@@ -307,7 +307,7 @@ int main(void)
 			// no buttons pressed
 			delay_ms(100);
 			bpress=0;
-			check_i2c_interface();
+			// check_i2c_interface();
 			check_buttons();
 			delay_ms(150);
 		}else{
@@ -315,12 +315,12 @@ int main(void)
 			if (bpress > 11){
 				// somebody pressed permanetly the button=>scroll fast
 				delay_ms(10);
-				check_i2c_interface();
+				// check_i2c_interface();
 				delay_ms(30);
 			}else{
 				bpress++;
 				delay_ms(100);
-				check_i2c_interface();
+				// check_i2c_interface();
 				delay_ms(100);
 			}
 		}
